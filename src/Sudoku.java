@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Sudoku {
 
@@ -40,6 +41,7 @@ public class Sudoku {
             sudoku.add(size, puzzleLine);
             size++;
         }
+        bufferedReader.close();
 
         // sets all possible numbers for all non given tiles
         for (int i = 0; i < size; i++) {
@@ -82,5 +84,73 @@ public class Sudoku {
 
     public static int getSize() {
         return size;
+    }
+
+    public boolean checkRow(int rowIndex) {
+        HashSet<Integer> seenNums = new HashSet<>();
+        
+        for (int i = 0; i < sudoku.get(rowIndex).size(); i++) {
+            int num = sudoku.get(rowIndex).get(i).getNum();
+
+            if (num != 0) {
+                if (seenNums.contains(num)) {
+                    return false;
+                } else {
+                    seenNums.add(num);
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean checkCol(int colIndex) {
+        HashSet<Integer> seenNums = new HashSet<>();
+        
+        for (int i = 0; i < sudoku.size(); i++) {
+            int num = sudoku.get(i).get(colIndex).getNum();
+
+            if (num != 0) {
+                if (seenNums.contains(num)) {
+                    return false;
+                } else {
+                    seenNums.add(num);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the 3x3 grid according to sudoku rules is valid
+     * @param location
+     * @return
+     */
+    public boolean checkGrd(Point location) {
+        HashSet<Integer> seenNums = new HashSet<>();
+    
+        // Calculate the starting row and column for the 3x3 grid
+        int startRow = (location.getY() / 3) * 3;
+        int startCol = (location.getX() / 3) * 3;
+    
+        // Loop through the 3x3 grid
+        for (int i = startRow; i < startRow + 3; i++) {
+            for (int j = startCol; j < startCol + 3; j++) {
+                // Ensure we're only checking non-zero numbers
+                if (sudoku.get(i).get(j).getNum() != 0) {
+                    int num = sudoku.get(i).get(j).getNum();
+                    if (seenNums.contains(num)) {
+                        return false;  // Duplicate number found
+                    } else {
+                        seenNums.add(num);  // Add number to the set
+                    }
+                }
+            }
+        }
+        return true;  // No duplicates found
+    }
+
+    public ArrayList<ArrayList<Tile>> getSudoku() {
+        return sudoku;
     }
 }
